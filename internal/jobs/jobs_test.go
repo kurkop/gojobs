@@ -14,6 +14,25 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
+// func TestCreate(t *testing.T) {
+// 	config := kube.GetLocalConfig()
+
+// 	// create the clientset
+// 	client, err := kube.NewClient(config)
+
+// 	gojob, err := New("my-job", "", "hello-world")
+// 	if err != nil {
+// 		t.Fatalf("error instancing job: %v", err)
+// 	}
+// 	p := &batchv1.Job{ObjectMeta: gojob.ObjectMeta, Spec: gojob.Spec}
+// 	newJob, err := client.BatchV1().Jobs("default").Create(context.TODO(), p, metav1.CreateOptions{})
+// 	t.Logf("Job name: %v", newJob.ObjectMeta.GetName())
+// 	//client.BatchV1().Jobs("default").Get(context.TODO())
+// 	if err != nil {
+// 		t.Fatalf("error injecting job add: %v", err)
+// 	}
+// }
+
 // TestGoJob demonstrates how to use a fake client with SharedInformerFactory in tests.
 func TestFakeJob(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -43,10 +62,19 @@ func TestFakeJob(t *testing.T) {
 	cache.WaitForCacheSync(ctx.Done(), jobInformer.HasSynced)
 
 	// Inject an event into the fake client.
-	p := &batchv1.Job{ObjectMeta: metav1.ObjectMeta{Name: "my-job"}}
-	_, err := client.BatchV1().Jobs("test-ns").Create(context.TODO(), p, metav1.CreateOptions{})
+	gojob, err := New("my-job", "test-ns", "hello-world")
+	if err != nil {
+		t.Fatalf("error instancing job: %v", err)
+	}
+	p := &batchv1.Job{ObjectMeta: gojob.ObjectMeta, Spec: gojob.Spec}
+	_, err = client.BatchV1().Jobs("test-ns").Create(context.TODO(), p, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf("error injecting job add: %v", err)
+	}
+	jobList, err := client.BatchV1().Jobs("test-ns").List(context.TODO(), metav1.ListOptions{})
+
+	for _, job := range jobList.Items {
+		t.Logf("%v", job)
 	}
 
 	select {

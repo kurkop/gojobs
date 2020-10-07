@@ -9,7 +9,7 @@ import (
 // GoJob is a Kubernetes Job
 type GoJob struct {
 	metav1.ObjectMeta
-	batchv1.JobSpec
+	Spec batchv1.JobSpec
 }
 
 const (
@@ -25,9 +25,10 @@ func New(name, namespace, image string) (*GoJob, error) {
 	w := GoJob{
 		ObjectMeta: metav1.ObjectMeta{
 			GenerateName: generateName,
-			Namespace:    namespace,
+			// Name:      name,
+			Namespace: namespace,
 		},
-		JobSpec: batchv1.JobSpec{
+		Spec: batchv1.JobSpec{
 			Template: apiv1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					GenerateName: generateName,
@@ -47,10 +48,9 @@ func New(name, namespace, image string) (*GoJob, error) {
 	return &w, nil
 }
 
+// Repository interface to handle GobJob methods
 type Repository interface {
-	// GetByID(ID string) (*Monitor, error)
-	// GetOne(filter *bson.M) (*Monitor, error)
-	// Save(monitor Monitor) error
-	// Find(filter *bson.M) (*mongo.Cursor, error)
-	// Delete(ID string) error
+	Get(name, namespace string) (*GoJob, error)
+	Create(name, namespace, image string) (*GoJob, error)
+	Delete(name, namespace string) error
 }
