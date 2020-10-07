@@ -4,7 +4,6 @@ go 1.13
 
 require (
 	github.com/Azure/go-autorest/autorest v0.11.7 // indirect
-	github.com/Kurlabs/alerty v0.0.0-20200616195838-265dce523d39 // indirect
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/labstack/echo/v4 v4.1.17
