@@ -52,5 +52,6 @@ func New(name, namespace, image string) (*GoJob, error) {
 type Repository interface {
 	Get(name, namespace string) (*GoJob, error)
 	Create(name, namespace, image string) (*GoJob, error)
+	Update(name, namespace string, jobSpec batchv1.JobSpec) error
 	Delete(name, namespace string) error
 }
