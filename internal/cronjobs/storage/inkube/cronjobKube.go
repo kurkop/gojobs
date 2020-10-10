@@ -1,0 +1,90 @@
+package inkube
+
+import (
+	"context"
+	"log"
+	"sync"
+
+	"github.com/kurkop/gojob/internal/cronjobs"
+	"k8s.io/client-go/kubernetes"
+
+	batchv1beta1 "k8s.io/api/batch/v1beta1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+type goCronJobsRepository struct {
+	goCronJobs map[string]cronjobs.GoCronJob
+	client     *kubernetes.Clientset
+}
+
+var (
+	goCronJobsOnce     sync.Once
+	goCronJobsInstance *goCronJobsRepository
+)
+
+// NewGoCronJobsRepository Instance new repository
+func NewGoCronJobsRepository(client *kubernetes.Clientset) cronjobs.Repository {
+	goCronJobsOnce.Do(func() {
+		goCronJobsInstance = &goCronJobsRepository{
+			goCronJobs: make(map[string]cronjobs.GoCronJob),
+			client:     client,
+		}
+	})
+	return goCronJobsInstance
+}
+
+func (m *goCronJobsRepository) Create(name, namespace, image, schedule string) (*cronjobs.GoCronJob, error) {
+	newJob, err := cronjobs.New(name, namespace, image, schedule)
+	if err != nil {
+		log.Fatalf("error instancing job: %v", err)
+		return nil, err
+	}
+	p := &batchv1beta1.CronJob{ObjectMeta: newJob.ObjectMeta, Spec: newJob.CronJobSpec}
+	jobCreated, err := m.client.BatchV1beta1().CronJobs(namespace).Create(context.TODO(), p, metav1.CreateOptions{})
+	if err != nil {
+		log.Fatalf("error creating job: %v", err)
+		return nil, err
+	}
+	jobCreatedName := jobCreated.ObjectMeta.GetName()
+	jobGot := cronjobs.GoCronJob{ObjectMeta: jobCreated.ObjectMeta, CronJobSpec: jobCreated.Spec}
+	m.goCronJobs[jobCreatedName] = jobGot
+	return &jobGot, nil
+}
+
+func (m *goCronJobsRepository) Get(name, namespace string) (*cronjobs.GoCronJob, error) {
+	getJob, err := m.client.BatchV1beta1().CronJobs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+	jobGot := cronjobs.GoCronJob{ObjectMeta: getJob.ObjectMeta, CronJobSpec: getJob.Spec}
+	m.goCronJobs[name] = jobGot
+	return &jobGot, nil
+}
+
+func (m *goCronJobsRepository) Update(name, namespace string, jobSpec batchv1beta1.CronJobSpec) error {
+	currentJob, err := m.Get(name, namespace)
+	if err != nil {
+		return err
+	}
+	p := &batchv1beta1.CronJob{ObjectMeta: currentJob.ObjectMeta, Spec: jobSpec}
+	jobUpdated, err := m.client.BatchV1beta1().CronJobs(namespace).Update(context.TODO(), p, metav1.UpdateOptions{})
+	if err != nil {
+		log.Fatalf("error updating job: %v", err)
+		return err
+	}
+	jobUpdatedName := jobUpdated.ObjectMeta.GetName()
+	jobGot := cronjobs.GoCronJob{ObjectMeta: jobUpdated.ObjectMeta, CronJobSpec: jobUpdated.Spec}
+	m.goCronJobs[jobUpdatedName] = jobGot
+	return nil
+}
+
+func (m *goCronJobsRepository) Delete(name, namespace string) error {
+	err := m.client.BatchV1beta1().CronJobs(namespace).Delete(context.TODO(), name, metav1.DeleteOptions{})
+	if err != nil {
+		return err
+	}
+	if _, ok := m.goCronJobs[name]; ok {
+		delete(m.goCronJobs, name)
+	}
+	return nil
+}

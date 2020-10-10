@@ -58,7 +58,7 @@ func New(name, namespace, image, schedule string) (*GoCronJob, error) {
 // Repository interface to handle GobJob methods
 type Repository interface {
 	Get(name, namespace string) (*GoCronJob, error)
-	Create(name, namespace, image string) (*GoCronJob, error)
-	Update(name, namespace string, jobSpec batchv1beta1.CronJob) error
+	Create(name, namespace, image, schedule string) (*GoCronJob, error)
+	Update(name, namespace string, jobSpec batchv1beta1.CronJobSpec) error
 	Delete(name, namespace string) error
 }
