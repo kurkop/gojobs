@@ -8,8 +8,11 @@ import (
 func New() *echo.Echo {
 	e := echo.New()
 
+	jobGroup := e.Group("/api/v1/job")
+
 	// set routes
 	api.MainGroup(e)
+	api.JobGroup(jobGroup)
 
 	return e
 }
