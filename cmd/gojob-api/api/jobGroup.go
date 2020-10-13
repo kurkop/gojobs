@@ -7,7 +7,7 @@ import (
 
 func JobGroup(g *echo.Group) {
 	g.POST("/", handlers.CreateJob)
-	g.GET("/:id", handlers.GetJob)
-	g.PUT("/:id", handlers.UpdateJob)
-	g.DELETE("/:id", handlers.DeleteJob)
+	g.GET("/:namespace/:name", handlers.GetJob)
+	g.PUT("/:name", handlers.UpdateJob)
+	g.DELETE("/:name", handlers.DeleteJob)
 }
