@@ -62,7 +62,7 @@ func TestFakeJob(t *testing.T) {
 	cache.WaitForCacheSync(ctx.Done(), jobInformer.HasSynced)
 
 	// Inject an event into the fake client.
-	gojob, err := New("my-job", "test-ns", "hello-world")
+	gojob, err := New("", "my-job", "test-ns", "hello-world")
 	if err != nil {
 		t.Fatalf("error instancing job: %v", err)
 	}

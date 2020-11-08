@@ -9,5 +9,5 @@ func JobGroup(g *echo.Group) {
 	g.POST("/", handlers.CreateJob)
 	g.GET("/:namespace/:name", handlers.GetJob)
 	g.PUT("/:name", handlers.UpdateJob)
-	g.DELETE("/:name", handlers.DeleteJob)
+	g.DELETE("/:namespace/:name", handlers.DeleteJob)
 }

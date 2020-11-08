@@ -13,7 +13,7 @@ func TestCreate(t *testing.T) {
 	client, err := kube.NewClient(config)
 
 	goJobRepo := NewGoJobsRepository(client)
-	goJobCreated, err := goJobRepo.Create("job-test", "default", "hello-world")
+	goJobCreated, err := goJobRepo.Create("", "job-test", "default", "hello-world")
 	if err != nil {
 		t.Fatalf("error creating job: %v", err)
 	}
@@ -32,7 +32,7 @@ func TestCreate(t *testing.T) {
 // 	client := fake.NewSimpleClientset()
 
 // 	goJobRepo := NewGoJobsRepository(client)
-// 	goJobCreated, err := goJobRepo.Create("job-test", "default", "hello-world")
+// 	goJobCreated, err := goJobRepo.Create("", "job-test", "default", "hello-world")
 // 	if err != nil {
 // 		t.Fatalf("error creating job: %v", err)
 // 	}

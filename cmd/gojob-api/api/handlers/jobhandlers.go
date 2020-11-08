@@ -16,8 +16,10 @@ type (
 		Name string `json:"name"`
 	}
 	job struct {
-		Name      string `json:"name"`
-		Namespace string `json:"namespace"`
+		Name         string `json:"name"`
+		GenerateName string `json:"generate_name"`
+		Namespace    string `json:"namespace"`
+		Image        string `json:"image"`
 	}
 )
 
@@ -31,15 +33,21 @@ var (
 //----------
 
 func CreateJob(c echo.Context) error {
-	u := &user{
-		ID: seq,
-	}
-	if err := c.Bind(u); err != nil {
+	j := &job{}
+	log.Println("Creating new job")
+
+	if err := c.Bind(j); err != nil {
 		return err
 	}
-	users[u.ID] = u
-	seq++
-	return c.JSON(http.StatusCreated, u)
+	goJobRepo := inkube.NewGoJobsRepository(config.KubeClient)
+
+	goJobCreated, err := goJobRepo.Create(j.Name, j.GenerateName, j.Namespace, j.Image)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	log.Printf("goJob created %v", goJobCreated)
+
+	return c.JSON(http.StatusCreated, goJobCreated)
 }
 
 func GetJob(c echo.Context) error {
@@ -67,7 +75,15 @@ func UpdateJob(c echo.Context) error {
 }
 
 func DeleteJob(c echo.Context) error {
-	name, _ := strconv.Atoi(c.Param("name"))
-	delete(users, name)
+	namespace := c.Param("namespace")
+	name := c.Param("name")
+	log.Printf("Getting job from namespace: %v name: %v", namespace, name)
+
+	goJobRepo := inkube.NewGoJobsRepository(config.KubeClient)
+	err := goJobRepo.Delete(name, namespace)
+	if err != nil {
+		log.Printf("error deleting job: %v", err)
+		return c.JSON(http.StatusInternalServerError, err)
+	}
 	return c.NoContent(http.StatusNoContent)
 }

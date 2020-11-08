@@ -33,16 +33,16 @@ func NewGoJobsRepository(client *kubernetes.Clientset) jobs.Repository {
 	return goJobsInstance
 }
 
-func (m *goJobsRepository) Create(name, namespace, image string) (*jobs.GoJob, error) {
-	newJob, err := jobs.New(name, namespace, image)
+func (m *goJobsRepository) Create(name, generateName, namespace, image string) (*jobs.GoJob, error) {
+	newJob, err := jobs.New(name, generateName, namespace, image)
 	if err != nil {
-		log.Fatalf("error instancing job: %v", err)
+		log.Printf("error instancing job: %v", err)
 		return nil, err
 	}
 	p := &batchv1.Job{ObjectMeta: newJob.ObjectMeta, Spec: newJob.Spec}
 	jobCreated, err := m.client.BatchV1().Jobs(namespace).Create(context.TODO(), p, metav1.CreateOptions{})
 	if err != nil {
-		log.Fatalf("error creating job: %v", err)
+		log.Printf("error creating job: %v", err)
 		return nil, err
 	}
 	jobCreatedName := jobCreated.ObjectMeta.GetName()
@@ -56,6 +56,7 @@ func (m *goJobsRepository) Get(name, namespace string) (*jobs.GoJob, error) {
 	if err != nil {
 		return nil, err
 	}
+	// log.Printf("GetJob Spec", getJob.Spec)
 	jobGot := jobs.GoJob{ObjectMeta: getJob.ObjectMeta, Spec: getJob.Spec}
 	m.goJobs[name] = jobGot
 	return &jobGot, nil
