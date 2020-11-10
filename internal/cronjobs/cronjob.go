@@ -24,6 +24,9 @@ func New(name, namespace, image, schedule string) (*GoCronJob, error) {
 	if namespace == "" {
 		namespace = defaultNamespace
 	}
+	// var sucessHistoryLimit, failedHistoryLimit int32
+	var sucessHistoryLimit int32 = 20
+	var failedHistoryLimit int32 = 10
 	w := GoCronJob{
 		ObjectMeta: metav1.ObjectMeta{
 			// GenerateName: generateName,
@@ -31,7 +34,9 @@ func New(name, namespace, image, schedule string) (*GoCronJob, error) {
 			Namespace: namespace,
 		},
 		CronJobSpec: batchv1beta1.CronJobSpec{
-			Schedule: schedule,
+			Schedule:                   schedule,
+			SuccessfulJobsHistoryLimit: &sucessHistoryLimit,
+			FailedJobsHistoryLimit:     &failedHistoryLimit,
 			JobTemplate: batchv1beta1.JobTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					GenerateName: generateName,
