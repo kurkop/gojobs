@@ -7,9 +7,19 @@ import (
 	"time"
 
 	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v2/altsrc"
 )
 
 func main() {
+	flags := []cli.Flag{
+		altsrc.NewStringFlag(&cli.StringFlag{Name: "name"}),
+		altsrc.NewStringFlag(&cli.StringFlag{Name: "namespace"}),
+		altsrc.NewStringFlag(&cli.StringFlag{Name: "image"}),
+		altsrc.NewStringFlag(&cli.StringFlag{Name: "schedule"}),
+		altsrc.NewStringFlag(&cli.StringFlag{Name: "generate_name"}),
+		&cli.StringFlag{Name: "config", Value: "gojob.yaml"},
+	}
+
 	app := &cli.App{
 		Name:            "gojob",
 		Usage:           "a tool to publish and run jobs on Kubernetes",
@@ -23,6 +33,11 @@ func main() {
 				Usage:   "Build a new docker image and upload it to registry",
 				Action: func(c *cli.Context) error {
 					fmt.Println("Publishing... ", c.Args().First())
+					fmt.Println(c.String("name"))
+					fmt.Println(c.String("namespace"))
+					fmt.Println(c.String("image"))
+					fmt.Println(c.String("schedule"))
+					fmt.Println(c.String("generate_name"))
 					return nil
 				},
 			},
@@ -37,6 +52,8 @@ func main() {
 			},
 		},
 		EnableBashCompletion: true,
+		Before:               altsrc.InitInputSourceWithContext(flags, altsrc.NewYamlSourceFromFlagFunc("config")),
+		Flags:                flags,
 	}
 
 	err := app.Run(os.Args)

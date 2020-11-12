@@ -1,0 +1,4 @@
+name: gocronjob-test
+schedule: "*/1 * * * *"
+namespace: default
+image: hello-world
