@@ -8,8 +8,9 @@ import (
 func New() *echo.Echo {
 	e := echo.New()
 
-	jobGroup := e.Group("/api/v1/job")
-	cronJobGroup := e.Group("/api/v1/cronjob")
+	// TODO: Resource Namespace
+	jobGroup := e.Group("/api/v1/:namespace/jobs")
+	cronJobGroup := e.Group("/api/v1/:namespace/cronjobs")
 
 	// set routes
 	api.MainGroup(e)
