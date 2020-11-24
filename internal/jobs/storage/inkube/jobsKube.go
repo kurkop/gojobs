@@ -62,6 +62,20 @@ func (m *goJobsRepository) Get(name, namespace string) (*jobs.GoJob, error) {
 	return &jobGot, nil
 }
 
+func (m *goJobsRepository) GetAll(namespace string) (jobsGot *jobs.GoJobList, err error) {
+	getJobs, err := m.client.BatchV1().Jobs(namespace).List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+	jobsGot = &jobs.GoJobList{}
+	for _, item := range getJobs.Items {
+		log.Printf("Item ObjectMeta: %v", item.ObjectMeta)
+		log.Printf("Item Spec: %v", item.Spec)
+		jobsGot.Items = append(jobsGot.Items, jobs.GoJob{ObjectMeta: item.ObjectMeta, Spec: item.Spec})
+	}
+	return
+}
+
 func (m *goJobsRepository) Update(name, namespace string, jobSpec batchv1.JobSpec) error {
 	currentJob, err := m.Get(name, namespace)
 	if err != nil {

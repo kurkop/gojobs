@@ -12,6 +12,11 @@ type GoJob struct {
 	Spec              batchv1.JobSpec `json:"spec" bson:"spec"`
 }
 
+// GoJobList is a slice of GoJob
+type GoJobList struct {
+	Items []GoJob `json:"items"`
+}
+
 const (
 	defaultNamespace = "default"
 )
@@ -56,6 +61,7 @@ func New(name, generateName, namespace, image string) (*GoJob, error) {
 // Repository interface to handle GobJob methods
 type Repository interface {
 	Get(name, namespace string) (*GoJob, error)
+	GetAll(namespace string) (jobsGot *GoJobList, err error)
 	Create(name, generateName, namespace, image string) (*GoJob, error)
 	Update(name, namespace string, jobSpec batchv1.JobSpec) error
 	Delete(name, namespace string) error

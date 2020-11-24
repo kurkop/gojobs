@@ -22,7 +22,8 @@ func TestCreate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error getting job: %v", err)
 	}
-	t.Logf("goJob got %v", goJobGot)
+	goJobsGot, err := goJobRepo.GetAll(goJobCreated.GetNamespace())
+	t.Logf("goJobs got %v", goJobsGot)
 	goJobRepo.Delete(goJobGot.GetName(), goJobGot.GetNamespace())
 }
 

@@ -64,6 +64,19 @@ func GetJob(c echo.Context) error {
 	return c.JSON(http.StatusOK, goJobGot)
 }
 
+func GetAllJob(c echo.Context) error {
+	namespace := c.Param("namespace")
+	log.Printf("Getting job from namespace: %v", namespace)
+
+	goJobRepo := inkube.NewGoJobsRepository(config.KubeClient)
+	goJobsGot, err := goJobRepo.GetAll(namespace)
+	if err != nil {
+		log.Printf("error getting job: %v", err)
+	}
+	log.Printf("Go Jobs return %v", goJobsGot.Items)
+	return c.JSON(http.StatusOK, goJobsGot.Items)
+}
+
 func UpdateJob(c echo.Context) error {
 	u := new(user)
 	if err := c.Bind(u); err != nil {

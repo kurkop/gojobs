@@ -8,7 +8,7 @@ import (
 func JobGroup(g *echo.Group) {
 	g.POST("/", handlers.CreateJob)
 	// list
-	g.GET("/", handlers.GetJob)
+	g.GET("/", handlers.GetAllJob)
 	g.GET("/:name", handlers.GetJob)
 	g.DELETE("/:name", handlers.DeleteJob)
 	// TODO:
