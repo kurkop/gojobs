@@ -61,6 +61,18 @@ func (m *goCronJobsRepository) Get(name, namespace string) (*cronjobs.GoCronJob,
 	return &jobGot, nil
 }
 
+func (m *goCronJobsRepository) GetAll(namespace string) (cronJobsGot *cronjobs.GoCronJobList, err error) {
+	getJobs, err := m.client.BatchV1beta1().CronJobs(namespace).List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+	cronJobsGot = &cronjobs.GoCronJobList{}
+	for _, item := range getJobs.Items {
+		cronJobsGot.Items = append(cronJobsGot.Items, cronjobs.GoCronJob{ObjectMeta: item.ObjectMeta, CronJobSpec: item.Spec})
+	}
+	return
+}
+
 func (m *goCronJobsRepository) Update(name, namespace string, jobSpec batchv1beta1.CronJobSpec) error {
 	currentJob, err := m.Get(name, namespace)
 	if err != nil {

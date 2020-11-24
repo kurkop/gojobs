@@ -23,6 +23,8 @@ func TestCreate(t *testing.T) {
 		t.Fatalf("error getting cronJob: %v", err)
 	}
 	t.Logf("goCronJob got %v", goCronJobGot)
+	goCronJobsGot, err := goCronJobRepo.GetAll(goCronJobCreated.GetNamespace())
+	t.Logf("goCronJobs got %v", goCronJobsGot)
 	goCronJobRepo.Delete(goCronJobGot.GetName(), goCronJobGot.GetNamespace())
 }
 

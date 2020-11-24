@@ -14,6 +14,11 @@ type GoCronJob struct {
 	CronJobSpec batchv1beta1.CronJobSpec
 }
 
+// GoCronJobList is a slice of GoCronJob
+type GoCronJobList struct {
+	Items []GoCronJob `json:"items"`
+}
+
 const (
 	defaultNamespace = "default"
 )
@@ -63,6 +68,7 @@ func New(name, namespace, image, schedule string) (*GoCronJob, error) {
 // Repository interface to handle GobJob methods
 type Repository interface {
 	Get(name, namespace string) (*GoCronJob, error)
+	GetAll(namespace string) (cronJobsGot *GoCronJobList, err error)
 	Create(name, namespace, image, schedule string) (*GoCronJob, error)
 	Update(name, namespace string, jobSpec batchv1beta1.CronJobSpec) error
 	Delete(name, namespace string) error

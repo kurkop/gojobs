@@ -55,6 +55,19 @@ func GetCronJob(c echo.Context) error {
 	return c.JSON(http.StatusOK, goCronJobGot)
 }
 
+func GetAllCronJob(c echo.Context) error {
+	namespace := c.Param("namespace")
+	log.Printf("Getting job from namespace: %v", namespace)
+
+	goCronJobRepo := inkube.NewGoCronJobsRepository(config.KubeClient)
+	goCronJobsGot, err := goCronJobRepo.GetAll(namespace)
+	if err != nil {
+		log.Printf("error getting cronjob: %v", err)
+	}
+	log.Printf("Go CronJobs return %v", goCronJobsGot.Items)
+	return c.JSON(http.StatusOK, goCronJobsGot.Items)
+}
+
 func UpdateCronJob(c echo.Context) error {
 	u := new(user)
 	if err := c.Bind(u); err != nil {

@@ -7,6 +7,7 @@ import (
 
 func CronJobGroup(g *echo.Group) {
 	g.POST("/", handlers.CreateCronJob)
+	g.GET("/", handlers.GetAllCronJob)
 	g.GET("/:name", handlers.GetCronJob)
 	g.DELETE("/:name", handlers.DeleteCronJob)
 }
