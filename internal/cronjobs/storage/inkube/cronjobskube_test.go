@@ -3,7 +3,7 @@ package inkube
 import (
 	"testing"
 
-	"github.com/kurkop/gojob/shared/kube"
+	"github.com/kurkop/gojobs/shared/kube"
 )
 
 func TestCreate(t *testing.T) {

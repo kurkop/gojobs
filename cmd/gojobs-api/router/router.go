@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/kurkop/gojob/cmd/gojob-api/api"
+	"github.com/kurkop/gojobs/cmd/gojob-api/api"
 	"github.com/labstack/echo/v4"
 )
 

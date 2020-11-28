@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/kurkop/gojob/cmd/gojob-api/config"
-	"github.com/kurkop/gojob/internal/jobs/storage/inkube"
+	"github.com/kurkop/gojobs/cmd/gojob-api/config"
+	"github.com/kurkop/gojobs/internal/jobs/storage/inkube"
 	"github.com/labstack/echo/v4"
 )
 

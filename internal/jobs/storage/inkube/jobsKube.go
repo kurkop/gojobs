@@ -5,7 +5,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/kurkop/gojob/internal/jobs"
+	"github.com/kurkop/gojobs/internal/jobs"
 	"k8s.io/client-go/kubernetes"
 
 	batchv1 "k8s.io/api/batch/v1"

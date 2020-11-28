@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/kurkop/gojob/shared/kube"
+	"github.com/kurkop/gojobs/shared/kube"
 	"k8s.io/client-go/kubernetes"
 )
 

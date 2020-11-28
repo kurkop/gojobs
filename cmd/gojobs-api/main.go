@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/kurkop/gojob/cmd/gojob-api/config"
-	"github.com/kurkop/gojob/cmd/gojob-api/router"
+	"github.com/kurkop/gojobs/cmd/gojob-api/config"
+	"github.com/kurkop/gojobs/cmd/gojob-api/router"
 	"github.com/labstack/echo/v4/middleware"
 )
 
