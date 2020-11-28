@@ -1,8 +1,11 @@
 package config
 
 import (
+	"os"
+
 	"github.com/kurkop/gojobs/shared/kube"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 var (
@@ -12,7 +15,13 @@ var (
 
 // KubeConnect opens a new kubernetes Clientset
 func KubeConnect() {
-	config := kube.GetLocalConfig()
+	var config *rest.Config
+
+	if os.Getenv("IN_CLUSTER") == "" {
+		config = kube.GetLocalConfig()
+	} else {
+		config = kube.GetInClusterConfig()
+	}
 
 	// create the clientset
 	KubeClient, _ = kube.NewClient(config)
