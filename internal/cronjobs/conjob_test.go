@@ -18,13 +18,13 @@ import (
 // 	// create the clientset
 // 	client, err := kube.NewClient(config)
 
-// 	gocronJob, err := New("my-cronjob", "default", "hello-world", "*/1 * * * *")
+// 	gocronJob, err := New("my-cronjob", "hello-world", "*/1 * * * *")
 // 	p := &batchv1beta1.CronJob{ObjectMeta: gocronJob.ObjectMeta, Spec: gocronJob.CronJobSpec}
-// 	_, err = client.BatchV1beta1().CronJobs("default").Create(context.TODO(), p, metav1.CreateOptions{})
+// 	_, err = client.BatchV1beta1().CronJobs(DefaultNamespace).Create(context.TODO(), p, metav1.CreateOptions{})
 // 	if err != nil {
 // 		t.Errorf("Error %v", err)
 // 	}
-// 	cronJobList, err := client.BatchV1beta1().CronJobs("default").List(context.TODO(), metav1.ListOptions{})
+// 	cronJobList, err := client.BatchV1beta1().CronJobs(DefaultNamespace).List(context.TODO(), metav1.ListOptions{})
 // 	if err != nil {
 // 		t.Errorf("Error %v", err)
 // 	}
@@ -62,16 +62,16 @@ func TestFakeJob(t *testing.T) {
 	cache.WaitForCacheSync(ctx.Done(), cronJobInformer.HasSynced)
 
 	// Inject an event into the fake client.
-	gocronJob, err := New("my-cronjob", "test-ns", "hello-world", "*/1 * * * *")
+	gocronJob, err := New("my-cronjob", "hello-world", "*/1 * * * *")
 	if err != nil {
 		t.Fatalf("error instancing cronJob: %v", err)
 	}
 	p := &batchv1beta1.CronJob{ObjectMeta: gocronJob.ObjectMeta, Spec: gocronJob.CronJobSpec}
-	_, err = client.BatchV1beta1().CronJobs("test-ns").Create(context.TODO(), p, metav1.CreateOptions{})
+	_, err = client.BatchV1beta1().CronJobs(DefaultNamespace).Create(context.TODO(), p, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf("error injecting cronJob add: %v", err)
 	}
-	cronJobList, err := client.BatchV1beta1().CronJobs("test-ns").List(context.TODO(), metav1.ListOptions{})
+	cronJobList, err := client.BatchV1beta1().CronJobs(DefaultNamespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		t.Errorf("Error %v", err)
 	}

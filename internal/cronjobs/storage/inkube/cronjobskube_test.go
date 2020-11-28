@@ -13,19 +13,19 @@ func TestCreate(t *testing.T) {
 	client, err := kube.NewClient(config)
 
 	goCronJobRepo := NewGoCronJobsRepository(client)
-	goCronJobCreated, err := goCronJobRepo.Create("cronjob-test", "default", "hello-world", "*/1 * * * *")
+	goCronJobCreated, err := goCronJobRepo.Create("cronjob-test", "hello-world", "*/1 * * * *")
 	if err != nil {
 		t.Fatalf("error creating cronJob: %v", err)
 	}
 	t.Logf("goCronJob created %v", goCronJobCreated)
-	goCronJobGot, err := goCronJobRepo.Get(goCronJobCreated.GetName(), goCronJobCreated.GetNamespace())
+	goCronJobGot, err := goCronJobRepo.Get(goCronJobCreated.GetName())
 	if err != nil {
 		t.Fatalf("error getting cronJob: %v", err)
 	}
 	t.Logf("goCronJob got %v", goCronJobGot)
-	goCronJobsGot, err := goCronJobRepo.GetAll(goCronJobCreated.GetNamespace())
+	goCronJobsGot, err := goCronJobRepo.GetAll()
 	t.Logf("goCronJobs got %v", goCronJobsGot)
-	goCronJobRepo.Delete(goCronJobGot.GetName(), goCronJobGot.GetNamespace())
+	goCronJobRepo.Delete(goCronJobGot.GetName())
 }
 
 // // TestFakeJob demonstrates how to use a fake client with SharedInformerFactory in tests.
@@ -34,7 +34,7 @@ func TestCreate(t *testing.T) {
 // 	client := fake.NewSimpleClientset()
 
 // 	goCronJobRepo := NewGoCronJobsRepository(client)
-// 	goCronJobCreated, err := goCronJobRepo.Create("cronjob-test", "default", "hello-world", "*/1 * * * *")
+// 	goCronJobCreated, err := goCronJobRepo.Create("cronjob-test", "hello-world", "*/1 * * * *")
 // 	if err != nil {
 // 		t.Fatalf("error creating cronJob: %v", err)
 // 	}

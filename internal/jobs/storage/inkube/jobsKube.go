@@ -33,14 +33,14 @@ func NewGoJobsRepository(client *kubernetes.Clientset) jobs.Repository {
 	return goJobsInstance
 }
 
-func (m *goJobsRepository) Create(name, generateName, namespace, image string) (*jobs.GoJob, error) {
-	newJob, err := jobs.New(name, generateName, namespace, image)
+func (m *goJobsRepository) Create(name, generateName, image string) (*jobs.GoJob, error) {
+	newJob, err := jobs.New(name, generateName, image)
 	if err != nil {
 		log.Printf("error instancing job: %v", err)
 		return nil, err
 	}
 	p := &batchv1.Job{ObjectMeta: newJob.ObjectMeta, Spec: newJob.Spec}
-	jobCreated, err := m.client.BatchV1().Jobs(namespace).Create(context.TODO(), p, metav1.CreateOptions{})
+	jobCreated, err := m.client.BatchV1().Jobs(jobs.DefaultNamespace).Create(context.TODO(), p, metav1.CreateOptions{})
 	if err != nil {
 		log.Printf("error creating job: %v", err)
 		return nil, err
@@ -51,8 +51,8 @@ func (m *goJobsRepository) Create(name, generateName, namespace, image string) (
 	return &jobGot, nil
 }
 
-func (m *goJobsRepository) Get(name, namespace string) (*jobs.GoJob, error) {
-	getJob, err := m.client.BatchV1().Jobs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+func (m *goJobsRepository) Get(name string) (*jobs.GoJob, error) {
+	getJob, err := m.client.BatchV1().Jobs(jobs.DefaultNamespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -62,8 +62,8 @@ func (m *goJobsRepository) Get(name, namespace string) (*jobs.GoJob, error) {
 	return &jobGot, nil
 }
 
-func (m *goJobsRepository) GetAll(namespace string) (jobsGot *jobs.GoJobList, err error) {
-	getJobs, err := m.client.BatchV1().Jobs(namespace).List(context.TODO(), metav1.ListOptions{})
+func (m *goJobsRepository) GetAll() (jobsGot *jobs.GoJobList, err error) {
+	getJobs, err := m.client.BatchV1().Jobs(jobs.DefaultNamespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -76,13 +76,13 @@ func (m *goJobsRepository) GetAll(namespace string) (jobsGot *jobs.GoJobList, er
 	return
 }
 
-func (m *goJobsRepository) Update(name, namespace string, jobSpec batchv1.JobSpec) error {
-	currentJob, err := m.Get(name, namespace)
+func (m *goJobsRepository) Update(name string, jobSpec batchv1.JobSpec) error {
+	currentJob, err := m.Get(name)
 	if err != nil {
 		return err
 	}
 	p := &batchv1.Job{ObjectMeta: currentJob.ObjectMeta, Spec: jobSpec}
-	jobUpdated, err := m.client.BatchV1().Jobs(namespace).Update(context.TODO(), p, metav1.UpdateOptions{})
+	jobUpdated, err := m.client.BatchV1().Jobs(jobs.DefaultNamespace).Update(context.TODO(), p, metav1.UpdateOptions{})
 	if err != nil {
 		log.Fatalf("error updating job: %v", err)
 		return err
@@ -93,8 +93,8 @@ func (m *goJobsRepository) Update(name, namespace string, jobSpec batchv1.JobSpe
 	return nil
 }
 
-func (m *goJobsRepository) Delete(name, namespace string) error {
-	err := m.client.BatchV1().Jobs(namespace).Delete(context.TODO(), name, metav1.DeleteOptions{})
+func (m *goJobsRepository) Delete(name string) error {
+	err := m.client.BatchV1().Jobs(jobs.DefaultNamespace).Delete(context.TODO(), name, metav1.DeleteOptions{})
 	if err != nil {
 		return err
 	}

@@ -62,16 +62,16 @@ func TestFakeJob(t *testing.T) {
 	cache.WaitForCacheSync(ctx.Done(), jobInformer.HasSynced)
 
 	// Inject an event into the fake client.
-	gojob, err := New("", "my-job", "test-ns", "hello-world")
+	gojob, err := New("", "my-job", "hello-world")
 	if err != nil {
 		t.Fatalf("error instancing job: %v", err)
 	}
 	p := &batchv1.Job{ObjectMeta: gojob.ObjectMeta, Spec: gojob.Spec}
-	_, err = client.BatchV1().Jobs("test-ns").Create(context.TODO(), p, metav1.CreateOptions{})
+	_, err = client.BatchV1().Jobs(DefaultNamespace).Create(context.TODO(), p, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf("error injecting job add: %v", err)
 	}
-	jobList, err := client.BatchV1().Jobs("test-ns").List(context.TODO(), metav1.ListOptions{})
+	jobList, err := client.BatchV1().Jobs(DefaultNamespace).List(context.TODO(), metav1.ListOptions{})
 
 	for _, job := range jobList.Items {
 		t.Logf("%v", job)

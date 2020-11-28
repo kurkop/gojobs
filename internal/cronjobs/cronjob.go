@@ -20,15 +20,12 @@ type GoCronJobList struct {
 }
 
 const (
-	defaultNamespace = "default"
+	DefaultNamespace = "gojobs"
 )
 
 // New creates a basic Job
-func New(name, namespace, image, schedule string) (*GoCronJob, error) {
+func New(name, image, schedule string) (*GoCronJob, error) {
 	generateName := name + "-"
-	if namespace == "" {
-		namespace = defaultNamespace
-	}
 	// var sucessHistoryLimit, failedHistoryLimit int32
 	var sucessHistoryLimit int32 = 20
 	var failedHistoryLimit int32 = 10
@@ -36,7 +33,7 @@ func New(name, namespace, image, schedule string) (*GoCronJob, error) {
 		ObjectMeta: metav1.ObjectMeta{
 			// GenerateName: generateName,
 			Name:      name,
-			Namespace: namespace,
+			Namespace: DefaultNamespace,
 		},
 		CronJobSpec: batchv1beta1.CronJobSpec{
 			Schedule:                   schedule,
@@ -67,9 +64,9 @@ func New(name, namespace, image, schedule string) (*GoCronJob, error) {
 
 // Repository interface to handle GobJob methods
 type Repository interface {
-	Get(name, namespace string) (*GoCronJob, error)
-	GetAll(namespace string) (cronJobsGot *GoCronJobList, err error)
-	Create(name, namespace, image, schedule string) (*GoCronJob, error)
-	Update(name, namespace string, jobSpec batchv1beta1.CronJobSpec) error
-	Delete(name, namespace string) error
+	Get(name string) (*GoCronJob, error)
+	GetAll() (cronJobsGot *GoCronJobList, err error)
+	Create(name, image, schedule string) (*GoCronJob, error)
+	Update(name string, jobSpec batchv1beta1.CronJobSpec) error
+	Delete(name string) error
 }

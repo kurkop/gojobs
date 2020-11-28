@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/kurkop/gojobs/cmd/gojob-api/config"
+	"github.com/kurkop/gojobs/cmd/gojobs-api/config"
 	"github.com/kurkop/gojobs/internal/jobs/storage/inkube"
 	"github.com/labstack/echo/v4"
 )
@@ -18,7 +18,6 @@ type (
 	job struct {
 		Name         string `json:"name"`
 		GenerateName string `json:"generate_name"`
-		Namespace    string `json:"namespace"`
 		Image        string `json:"image"`
 	}
 )
@@ -41,7 +40,7 @@ func CreateJob(c echo.Context) error {
 	}
 	goJobRepo := inkube.NewGoJobsRepository(config.KubeClient)
 
-	goJobCreated, err := goJobRepo.Create(j.Name, j.GenerateName, j.Namespace, j.Image)
+	goJobCreated, err := goJobRepo.Create(j.Name, j.GenerateName, j.Image)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
@@ -51,12 +50,11 @@ func CreateJob(c echo.Context) error {
 }
 
 func GetJob(c echo.Context) error {
-	namespace := c.Param("namespace")
 	name := c.Param("name")
-	log.Printf("Getting job from namespace: %v name: %v", namespace, name)
+	log.Printf("Getting job - name: %v", name)
 
 	goJobRepo := inkube.NewGoJobsRepository(config.KubeClient)
-	goJobGot, err := goJobRepo.Get(name, namespace)
+	goJobGot, err := goJobRepo.Get(name)
 	if err != nil {
 		log.Printf("error getting job: %v", err)
 	}
@@ -65,11 +63,10 @@ func GetJob(c echo.Context) error {
 }
 
 func GetAllJob(c echo.Context) error {
-	namespace := c.Param("namespace")
-	log.Printf("Getting job from namespace: %v", namespace)
+	log.Printf("Getting job from gojobs")
 
 	goJobRepo := inkube.NewGoJobsRepository(config.KubeClient)
-	goJobsGot, err := goJobRepo.GetAll(namespace)
+	goJobsGot, err := goJobRepo.GetAll()
 	if err != nil {
 		log.Printf("error getting job: %v", err)
 	}
@@ -88,14 +85,13 @@ func UpdateJob(c echo.Context) error {
 }
 
 func DeleteJob(c echo.Context) error {
-	namespace := c.Param("namespace")
 	name := c.Param("name")
-	log.Printf("Getting job from namespace: %v name: %v", namespace, name)
+	log.Printf("Deleting job - name: %v", name)
 
 	goJobRepo := inkube.NewGoJobsRepository(config.KubeClient)
-	err := goJobRepo.Delete(name, namespace)
+	err := goJobRepo.Delete(name)
 	if err != nil {
-		log.Printf("error deleting job: %v", err)
+		log.Printf("Error deleting job: %v", err)
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.NoContent(http.StatusNoContent)

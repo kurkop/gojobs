@@ -18,14 +18,11 @@ type GoJobList struct {
 }
 
 const (
-	defaultNamespace = "default"
+	DefaultNamespace = "gojobs"
 )
 
 // New creates a basic Job
-func New(name, generateName, namespace, image string) (*GoJob, error) {
-	if namespace == "" {
-		namespace = defaultNamespace
-	}
+func New(name, generateName, image string) (*GoJob, error) {
 	var containerName string
 	if name != "" {
 		containerName = name
@@ -36,7 +33,7 @@ func New(name, generateName, namespace, image string) (*GoJob, error) {
 		ObjectMeta: metav1.ObjectMeta{
 			GenerateName: generateName,
 			Name:         name,
-			Namespace:    namespace,
+			Namespace:    DefaultNamespace,
 		},
 		Spec: batchv1.JobSpec{
 			Template: apiv1.PodTemplateSpec{
@@ -60,9 +57,9 @@ func New(name, generateName, namespace, image string) (*GoJob, error) {
 
 // Repository interface to handle GobJob methods
 type Repository interface {
-	Get(name, namespace string) (*GoJob, error)
-	GetAll(namespace string) (jobsGot *GoJobList, err error)
-	Create(name, generateName, namespace, image string) (*GoJob, error)
-	Update(name, namespace string, jobSpec batchv1.JobSpec) error
-	Delete(name, namespace string) error
+	Get(name string) (*GoJob, error)
+	GetAll() (jobsGot *GoJobList, err error)
+	Create(name, generateName, image string) (*GoJob, error)
+	Update(name string, jobSpec batchv1.JobSpec) error
+	Delete(name string) error
 }

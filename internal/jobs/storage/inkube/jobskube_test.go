@@ -13,18 +13,18 @@ func TestCreate(t *testing.T) {
 	client, err := kube.NewClient(config)
 
 	goJobRepo := NewGoJobsRepository(client)
-	goJobCreated, err := goJobRepo.Create("", "job-test", "default", "hello-world")
+	goJobCreated, err := goJobRepo.Create("", "job-test", "hello-world")
 	if err != nil {
 		t.Fatalf("error creating job: %v", err)
 	}
 	t.Logf("goJob created %v", goJobCreated)
-	goJobGot, err := goJobRepo.Get(goJobCreated.GetName(), goJobCreated.GetNamespace())
+	goJobGot, err := goJobRepo.Get(goJobCreated.GetName())
 	if err != nil {
 		t.Fatalf("error getting job: %v", err)
 	}
-	goJobsGot, err := goJobRepo.GetAll(goJobCreated.GetNamespace())
+	goJobsGot, err := goJobRepo.GetAll()
 	t.Logf("goJobs got %v", goJobsGot)
-	goJobRepo.Delete(goJobGot.GetName(), goJobGot.GetNamespace())
+	goJobRepo.Delete(goJobGot.GetName())
 }
 
 // // TestFakeJob demonstrates how to use a fake client with SharedInformerFactory in tests.
@@ -33,12 +33,12 @@ func TestCreate(t *testing.T) {
 // 	client := fake.NewSimpleClientset()
 
 // 	goJobRepo := NewGoJobsRepository(client)
-// 	goJobCreated, err := goJobRepo.Create("", "job-test", "default", "hello-world")
+// 	goJobCreated, err := goJobRepo.Create("", "job-test", "hello-world")
 // 	if err != nil {
 // 		t.Fatalf("error creating job: %v", err)
 // 	}
 // 	t.Logf("goJob created %v", goJobCreated)
-// 	goJobGot, err := goJobRepo.Get(goJobCreated.GetName(), goJobCreated.GetNamespace())
+// 	goJobGot, err := goJobRepo.Get(goJobCreated.GetName())
 // 	if err != nil {
 // 		t.Fatalf("error getting job: %v", err)
 // 	}

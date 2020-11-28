@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/kurkop/gojobs/cmd/gojob-api/api/handlers"
+	"github.com/kurkop/gojobs/cmd/gojobs-api/api/handlers"
 	"github.com/labstack/echo/v4"
 )
 

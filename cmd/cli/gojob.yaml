@@ -1,4 +1,3 @@
 generate_name: gojob-test
 _name: ""
-namespace: default
 image: hello-world
