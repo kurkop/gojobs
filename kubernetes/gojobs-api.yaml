@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: gojobs
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gojobs-api
+  namespace: gojobs
+  labels:
+    app: gojobs-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gojobs-api
+  template:
+    metadata:
+      labels:
+        app: gojobs-api
+    spec:
+      serviceAccountName: gojobs-manager-sa
+      automountServiceAccountToken: true
+      containers:
+      - name: gojobs-api
+        image: kurkop/gojobs
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: gojobs-api-service
+  name: gojobs-api-service
+  namespace: gojobs
+spec:
+  ports:
+    # The port that this service should serve on.
+    - port: 80
+      protocol: TCP
+      targetPort: 8000
+      name: gojobs-api-http-port
+  selector:
+    app: gojobs-api
