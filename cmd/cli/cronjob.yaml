@@ -1,3 +1,5 @@
+gojobs-api-url: urlx
+gojobs-api-token: tokenx
 name: gocronjob-test
 schedule: "*/1 * * * *"
 image: hello-world

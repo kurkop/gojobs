@@ -12,8 +12,9 @@ import (
 
 func main() {
 	flags := []cli.Flag{
+		altsrc.NewStringFlag(&cli.StringFlag{Name: "gojobs-api-url"}),
+		altsrc.NewStringFlag(&cli.StringFlag{Name: "gojobs-api-token"}),
 		altsrc.NewStringFlag(&cli.StringFlag{Name: "name"}),
-		altsrc.NewStringFlag(&cli.StringFlag{Name: "namespace"}),
 		altsrc.NewStringFlag(&cli.StringFlag{Name: "image"}),
 		altsrc.NewStringFlag(&cli.StringFlag{Name: "schedule"}),
 		altsrc.NewStringFlag(&cli.StringFlag{Name: "generate_name"}),
@@ -34,7 +35,8 @@ func main() {
 				Action: func(c *cli.Context) error {
 					fmt.Println("Publishing... ", c.Args().First())
 					fmt.Println(c.String("name"))
-					fmt.Println(c.String("namespace"))
+					fmt.Println(c.String("gojobs-api-url"))
+					fmt.Println(c.String("gojobs-api-token"))
 					fmt.Println(c.String("image"))
 					fmt.Println(c.String("schedule"))
 					fmt.Println(c.String("generate_name"))

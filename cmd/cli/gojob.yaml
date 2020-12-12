@@ -1,3 +1,5 @@
+gojobs-api-url: urlx
+gojobs-api-token: tokenx
 generate_name: gojob-test
-_name: ""
+# name: ""
 image: hello-world
