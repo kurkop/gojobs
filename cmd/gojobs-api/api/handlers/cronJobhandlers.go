@@ -50,6 +50,9 @@ func GetCronJob(c echo.Context) error {
 		log.Printf("error getting cronjob: %v", err)
 	}
 	log.Printf("%v", goCronJobGot)
+	if goCronJobGot == nil {
+		return c.JSON(http.StatusNoContent, map[string]string{})
+	}
 	return c.JSON(http.StatusOK, goCronJobGot)
 }
 
@@ -62,6 +65,9 @@ func GetAllCronJob(c echo.Context) error {
 		log.Printf("error getting cronjob: %v", err)
 	}
 	log.Printf("Go CronJobs return %v", goCronJobsGot.Items)
+	if goCronJobsGot.Items == nil {
+		return c.JSON(http.StatusNoContent, []int{})
+	}
 	return c.JSON(http.StatusOK, goCronJobsGot.Items)
 }
 

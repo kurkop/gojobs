@@ -59,6 +59,9 @@ func GetJob(c echo.Context) error {
 		log.Printf("error getting job: %v", err)
 	}
 	log.Printf("%v", goJobGot)
+	if goJobGot == nil {
+		return c.JSON(http.StatusNoContent, map[string]string{})
+	}
 	return c.JSON(http.StatusOK, goJobGot)
 }
 
@@ -71,6 +74,9 @@ func GetAllJob(c echo.Context) error {
 		log.Printf("error getting job: %v", err)
 	}
 	log.Printf("Go Jobs return %v", goJobsGot.Items)
+	if goJobsGot.Items == nil {
+		return c.JSON(http.StatusNoContent, []int{})
+	}
 	return c.JSON(http.StatusOK, goJobsGot.Items)
 }
 
