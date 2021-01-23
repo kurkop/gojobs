@@ -30,7 +30,7 @@ function AuthForm() {
   useEffect(() => {
     if (!user) {
       authUI.start(".firebaseui-auth-container", {
-        signInOptions: [firebase.auth.GithubAuthProvider.PROVIDER_ID, firebase.auth.GoogleAuthProvider.PROVIDER_ID, firebase.auth.FacebookAuthProvider.PROVIDER_ID, firebase.auth.EmailAuthProvider.PROVIDER_ID],
+        signInOptions: [firebase.auth.GithubAuthProvider.PROVIDER_ID, firebase.auth.GoogleAuthProvider.PROVIDER_ID, firebase.auth.EmailAuthProvider.PROVIDER_ID],
         signInFlow: "redirect",
       });
     }
